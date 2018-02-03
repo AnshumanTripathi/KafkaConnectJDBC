@@ -29,7 +29,6 @@ public class JDBCSourceTask extends SourceTask {
 
     @Override
     public void start(Map<String, String> map) {
-        System.out.println("Starting Service!!!");
         try {
             Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection("jdbc:mysql://localhost/test", "root", "root");
@@ -78,7 +77,6 @@ public class JDBCSourceTask extends SourceTask {
 
             for (Person person : people) {
                 JDBCSourceConnectorContext.setLastPolledId(person.getId());
-                System.out.println(person.getId() + " "+ person.getFirstName());
                 records.add(new SourceRecord(
                         sourcePartitionMap,
                         sourceOffsetMap,

@@ -13,5 +13,9 @@ An implementation for the a Kafka JDBC connector to be used with Kafka Connect t
  - Clone the repository
  - `mvn clean install`
  - `mvn clean package`
- - Start Source `./connect-standalone ~/Documents/kafka-connect-mysql-source/src/main/config/source_worker.properties ~/Documents/kafka-connect-mysql-source/src/main/config/ConnectorSource.properties `
- - Start Sink `./connect-standalone ~/Documents/kafka-connect-mysql-source/src/main/config/source_worker.properties ~/Documents/kafka-connect-mysql-source/src/main/config/ConnectorSource.properties `
+ - Rename `ConnectorSink.properites.example` to `ConnectorSink.properties` and update the configurations in it
+ - Rename `ConnectorSource.properites.example` to `ConnectorSource.properties` and update the configurations in it
+ - Rename `sink_worker.properites.example` to `sink_worker.properties` and update the configurations in it
+ - Rename `source_worker.properites.example` to `source_worker.properties` and update the configurations in it
+ - Start Source `./connect-standalone <Path-to-project>/kafka-connect-mysql-source/src/main/config/source_worker.properties <Path-to-project>/kafka-connect-mysql-source/src/main/config/ConnectorSource.properties `
+ - Start Sink `./connect-standalone <Path-to-project>/Documents/kafka-connect-mysql-source/src/main/config/source_worker.properties <Path-to-project>/Documents/kafka-connect-mysql-source/src/main/config/ConnectorSource.properties `

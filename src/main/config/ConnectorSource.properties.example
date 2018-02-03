@@ -1,0 +1,6 @@
+name=JdbcSourceConnector
+connector.class=com.kafkaconnect.source.connector.JDBCSourceConnector
+connection.url=<DB_Connection_URL>
+connection.user=<DB User>
+connection.password=<DB Password>
+incrementing_column_name=

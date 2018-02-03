@@ -24,6 +24,7 @@ public class SampleSinkTask extends SinkTask {
     public void put(Collection<SinkRecord> collection) {
         Iterator<SinkRecord> iterator = collection.iterator();
         while(iterator.hasNext()) {
+            //Received Record. Process it or forward to
             logger.info("Received Value :" + String.valueOf(iterator.next()));
         }
     }

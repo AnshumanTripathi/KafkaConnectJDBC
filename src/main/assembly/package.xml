@@ -19,13 +19,6 @@
                 <include>licenses/</include>
             </includes>
         </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/config</directory>
-            <outputDirectory>etc/${project.name}</outputDirectory>
-            <includes>
-                <include>*</include>
-            </includes>
-        </fileSet>
     </fileSets>
     <dependencySets>
         <dependencySet>

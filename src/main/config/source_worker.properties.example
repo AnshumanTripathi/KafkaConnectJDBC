@@ -15,10 +15,6 @@ internal.value.converter.schemas.enable=true
 rest.port=8086
 rest.host.name=127.0.0.1
 # this config is only for standalone workers
-offset.storage.file.filename=/Users/anshuman.tripat/Documents/kafka-connect-mysql-source/src/offests/standalone.offsets
+offset.storage.file.filename=<Path-to-project>/offests/standalone.offsets
 offset.flush.interval.ms=10000
-plugin.path=/Users/anshuman.tripat/Documents/kafka-connect-mysql-source/target/kafka-connect-mysql-source-1.0-SNAPSHOT-package/share/java
-
-
-
-
+plugin.path=<Path-to-project>/target/kafka-connect-mysql-source-1.0-SNAPSHOT-package/share/java
