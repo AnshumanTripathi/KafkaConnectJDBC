@@ -1,0 +1,104 @@
+version: "3.4"
+services:
+  zookeeper:
+      image: confluentinc/cp-zookeeper:4.0.0
+      container_name: zookeeper
+      networks:
+        - kafka-network
+      ports:
+        - 2181:2181
+      environment:
+        - ZOOKEEPER_CLIENT_PORT=2181
+        - ZOOKEEPER_TICK_TIME=2000
+
+  kafka:
+      image: confluentinc/cp-kafka:4.0.0
+      container_name: kafka-service
+      networks:
+        - kafka-network
+      ports:
+        - 9092:9092
+        - 19092:19092
+      links:
+        - zookeeper
+      environment:
+        - KAFKA_BROKER_ID=1
+        - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+        - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka-service:9092
+        - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+        - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+        - KAFKA_JMX_PORT=19092
+        - KAFKA_JMX_HOSTNAME=0.0.0.0
+
+  schema-registry:
+      image: confluentinc/cp-schema-registry:4.0.1-1
+      container_name: schema-registry
+      networks:
+        - kafka-network
+      ports:
+        - 8081:8081
+        - 18081:18081
+      links:
+        - kafka
+      environment:
+        - SCHEMA_REGISTRY_HOST_NAME=schema-registry-service
+        - SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS=PLAINTEXT://kafka-service:9092
+        - SCHEMA_REGISTRY_JMX_HOSTNAME=0.0.0.0
+        - SCHEMA_REGISTRY_JMX_PORT=18081
+
+  kafka-connect:
+      build: .
+      container_name: kafka-connect
+      ports:
+        - 8083:8083
+        - 18083:18083
+      networks:
+        - kafka-network
+      links:
+        - kafka
+      environment:
+        - CONNECT_BOOTSTRAP_SERVERS=kafka-service:9092
+        - CONNECT_REST_ADVERTISED_HOST_NAME=kafka-connect-service
+        - CONNECT_REST_PORT=8083
+        - CONNECT_GROUP_ID=connect-group
+        - CONNECT_KEY_CONVERTER=io.confluent.connect.avro.AvroConverter
+        - CONNECT_VALUE_CONVERTER=io.confluent.connect.avro.AvroConverter
+        - CONNECT_INTERNAL_KEY_CONVERTER=org.apache.kafka.connect.json.JsonConverter
+        - CONNECT_INTERNAL_VALUE_CONVERTER=org.apache.kafka.connect.json.JsonConverter
+        - CONNECT_CONFIG_STORAGE_TOPIC=my_connect_configs
+        - CONNECT_OFFSET_STORAGE_TOPIC=my_connect_offsets
+        - CONNECT_STATUS_STORAGE_TOPIC=my_connect_status
+        - CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR=1
+        - CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR=1
+        - CONNECT_STATUS_STORAGE_REPLICATION_FACTOR=1
+        - CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL=http://schema-registry:8081
+        - CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL=http://schema-registry:8081
+        - CONNECT_LOG4J_ROOT_LOGLEVEL=INFO
+        - CONNECT_LOG4J_LOGGERS=org.reflections=ERROR
+        - CONNECT_OFFSET_FLUSH_INTERVAL_MS=1000
+        - CONNECT_OFFSET_FLUSH_TIMEOUT_MS=45000
+        - CONNECT_TASK_SHUTDOWN_GRACEFUL_TIMEOUT_MS=45000
+        - KAFKA_JMX_PORT=18083
+        - KAFKA_JMX_HOSTNAME=0.0.0.0
+
+  mysql-source:
+    image: mysql:5.7
+    container_name: mysql
+    ports:
+      - 3306:3306
+    networks:
+      - kafka-network
+    volumes:
+        - mysql-volume:/var/lib/mysql:rw
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=test
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+
+volumes:
+  mysql-volume:
+
+networks:
+  kafka-network:

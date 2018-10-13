@@ -25,6 +25,9 @@ public class JDBCConnectorConfig extends AbstractConfig {
   private static final String CONNECTION_PASSWORD = "connection.password";
   private static final String CONNECTION_PASSWORD_DOC = "Connection Password";
 
+  private static final String DATABASE = "database";
+  private static final String DATABASE_DOC = "Database to connect";
+
   private static final String CONNECTION_CLASS = "connector.class";
   private static final String CONNECTION_CLASS_DOC = "Connector Class";
 
@@ -46,8 +49,7 @@ public class JDBCConnectorConfig extends AbstractConfig {
             .define(CONNECTION_USER, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, CONNECTION_USER_DOC)
             .define(CONNECTION_PASSWORD, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, CONNECTION_PASSWORD_DOC)
             .define(CONNECTION_CLASS, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, CONNECTION_CLASS_DOC)
-            .define(INCREMENTING_COLUMN_NAME, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, INCREMENTING_COLUMN_NAME_DOC);
-
+            .define(DATABASE, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, DATABASE_DOC);
   }
 
   public static String getTOPIC() {
@@ -60,5 +62,21 @@ public class JDBCConnectorConfig extends AbstractConfig {
 
   public static String getFirstName() {
     return FIRST_NAME;
+  }
+
+  public static String getConnectionUrl() {
+    return CONNECTION_URL;
+  }
+
+  public static String getConnectionUser() {
+    return CONNECTION_USER;
+  }
+
+  public static String getConnectionPassword() {
+    return CONNECTION_PASSWORD;
+  }
+
+  public static String getDatabase() {
+    return DATABASE;
   }
 }

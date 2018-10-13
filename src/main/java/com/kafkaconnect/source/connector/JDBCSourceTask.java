@@ -6,6 +6,7 @@ import com.kafkaconnect.source.schema.PersonSchema;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
+import org.apache.log4j.Logger;
 
 import java.sql.DriverManager;
 import java.sql.Connection;
@@ -20,37 +21,35 @@ import java.util.Map;
 
 
 public class JDBCSourceTask extends SourceTask {
-    private static Connection conn;
+    private static final Logger logger = Logger.getLogger(JDBCSourceTask.class.getName());
+    private Map<String, String> props;
+    private JDBCSourceConnectorContext context;
 
+    /**
+     * @return implementation version of Task
+     */
     @Override
     public String version() {
-        return null;
+        return JDBCSourceTask.class.getPackage().getImplementationVersion();
     }
 
     @Override
-    public void start(Map<String, String> map) {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/test", "root", "root");
-            JDBCSourceConnectorContext.setConn(conn);
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
-        }
+    public void start(Map<String, String> props) {
+        this.props = props;
+        this.context = new JDBCSourceConnectorContext(props);
     }
 
     @Override
     public List<SourceRecord> poll() throws InterruptedException {
-
-        ArrayList<Person> people = new ArrayList<>();
-
+        final ArrayList<Person> people = new ArrayList<>();
         try {
-            ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM person WHERE id > " + JDBCSourceConnectorContext.getLastPolledId());
+            final ResultSet rs = context.getConnection().createStatement().executeQuery(String.format("SELECT * FROM person WHERE id > %s", context.getLastPolledId()));
             while (rs.next()) {
-
-                people.add(new Person(rs.getInt("id"), rs.getString("first_name")));
+                final Person person = new Person(rs.getInt("id"), rs.getString("first_name"));
+                people.add(person);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Exception encountered while fetching records from the database", e);
         }
         return generateSourceRecords(people);
     }
@@ -58,25 +57,20 @@ public class JDBCSourceTask extends SourceTask {
 
     @Override
     public void stop() {
-        JDBCSourceConnectorContext.isClosed().set(true);
-        try {
-            conn.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        context.closeConnection();
+        context.disconnect();
     }
 
     private List<SourceRecord> generateSourceRecords(List<Person> people) {
-        ArrayList<SourceRecord> records = new ArrayList<>();
-
-        if (!JDBCSourceConnectorContext.isClosed().get()) {
-            HashMap<String, String> sourcePartitionMap = new HashMap<>();
-            sourcePartitionMap.put("table", "person");
-            HashMap<String, String> sourceOffsetMap = new HashMap<>();
+        final ArrayList<SourceRecord> records = new ArrayList<>();
+        if (!context.isClosed()) {
+            final HashMap<String, String> sourcePartitionMap = new HashMap<>();
+            sourcePartitionMap.put("table", props.get("table"));
+            final HashMap<String, String> sourceOffsetMap = new HashMap<>();
             sourceOffsetMap.put("Id", JDBCConnectorConfig.getID());
 
             for (Person person : people) {
-                JDBCSourceConnectorContext.setLastPolledId(person.getId());
+                context.setLastPolledId(person.getId());
                 records.add(new SourceRecord(
                         sourcePartitionMap,
                         sourceOffsetMap,
@@ -96,16 +90,12 @@ public class JDBCSourceTask extends SourceTask {
 
     private Struct buildKey(Person person) {
         return new Struct(PersonSchema.PERSON_SCHEMA_KEY)
-                .put("id", ((int) person.getId()));
+                .put("id", (person.getId()));
     }
 
     private Struct buildRecordValue(Person person) {
         return new Struct(PersonSchema.PERSON_SCHEMA_VALUE)
-                .put(PersonSchema.getID(), ((int) person.getId()))
+                .put(PersonSchema.getID(), (person.getId()))
                 .put(PersonSchema.getNAME(), person.getFirstName());
-    }
-
-    public static Connection getConn() {
-        return conn;
     }
 }

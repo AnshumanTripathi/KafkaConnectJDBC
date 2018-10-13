@@ -12,19 +12,6 @@
         <!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka -->
         <dependency>
             <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.11</artifactId>
-            <version>0.10.2.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.kafka/connect-api -->
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
             <artifactId>connect-api</artifactId>
             <version>1.0.0</version>
             <exclusions>
@@ -34,6 +21,20 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka_2.12</artifactId>
+            <version>1.0.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
 
         <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
         <dependency>
@@ -54,23 +55,28 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.5.3</version>
-                <configuration>
-                    <descriptors>
-                        <descriptor>src/main/assembly/package.xml</descriptor>
-                    </descriptors>
-                </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.1.1</version>
                 <executions>
                     <execution>
-                        <id>make-assembly</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>single</goal>
+                            <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <finalName>connector-jar-with-dependencies</finalName>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>org.apache.kafka:*</exclude>
+                                    <exclude>io.confluent:*</exclude>
+                                    <!-- Without these Connect fails to register any connectors -->
+                                    <exclude>org.bouncycastle:bcprov-jdk15on</exclude>
+                                    <exclude>org.bouncycastle:bcpg-jdk15on</exclude>
+                                    <exclude>org.bouncycastle:bcpkix-jdk15on</exclude>
+                                </excludes>
+                            </artifactSet>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

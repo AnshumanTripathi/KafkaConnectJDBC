@@ -1,0 +1,11 @@
+{
+  "name": "jdbc-sink",
+  "config": {
+    "connector.class": "com.kafkaconnect.sink.connector.SampleSinkConnector",
+    "connection.url": "jdbc:mysql://mysql-source/",
+    "connection.user": "root",
+    "connection.password": "root",
+    "database": "test",
+    "topics": "jdbc-source"
+  }
+}

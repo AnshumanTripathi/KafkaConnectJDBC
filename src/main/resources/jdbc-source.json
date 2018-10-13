@@ -1,0 +1,11 @@
+{
+  "name": "jdbc-source",
+  "config": {
+    "connector.class": "com.kafkaconnect.source.connector.JDBCSourceConnector",
+    "connection.url": "jdbc:mysql://mysql-source/",
+    "connection.user": "root",
+    "connection.password": "root",
+    "database": "test",
+    "topic": "jdbc-source"
+  }
+}

@@ -2,3 +2,7 @@
 target/
 *.iml
 .properties
+src/main/config/ConnectorSink.properties
+src/main/config/ConnectorSource.properties
+src/main/config/sink_worker.properties
+src/main/config/source_worker.properties

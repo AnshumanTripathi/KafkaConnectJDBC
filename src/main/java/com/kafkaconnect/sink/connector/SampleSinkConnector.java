@@ -27,6 +27,7 @@ public class SampleSinkConnector extends SinkConnector {
      */
     @Override
     public void start(Map<String, String> map) {
+        logger.info("Checking for topic "+map.get(JDBCConnectorConfig.getTOPIC()));
         config = new JDBCConnectorConfig(map);
     }
 

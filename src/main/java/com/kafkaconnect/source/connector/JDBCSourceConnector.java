@@ -12,41 +12,41 @@ import java.util.Map;
 
 public class JDBCSourceConnector extends SourceConnector {
 
-  private JDBCConnectorConfig config;
-  @Override
-  public String version() {
-    return null;
-  }
+    private JDBCSourceConnectorContext context;
+    private JDBCConnectorConfig config;
 
-  @Override
-  public void start(Map<String, String> map) {
-    config = new JDBCConnectorConfig(map);
-  }
 
-  @Override
-  public Class<? extends Task> taskClass() {
-    return JDBCSourceTask.class;
-  }
-
-  @Override
-  public List<Map<String, String>> taskConfigs(int i) {
-    ArrayList<Map<String, String>> configs = new ArrayList<>();
-    configs.add(config.originalsStrings());
-    return configs;
-  }
-
-  @Override
-  public void stop() {
-    try {
-      JDBCSourceTask.getConn().close();
-    } catch (SQLException e) {
-      e.printStackTrace();
+    @Override
+    public String version() {
+        return null;
     }
-    //End DB connections or stop source connector or something
-  }
 
-  @Override
-  public ConfigDef config() {
-    return JDBCConnectorConfig.conf();
-  }
+    @Override
+    public void start(Map<String, String> map) {
+        config = new JDBCConnectorConfig(map);
+        context = new JDBCSourceConnectorContext(map);
+    }
+
+    @Override
+    public Class<? extends Task> taskClass() {
+        return JDBCSourceTask.class;
+    }
+
+    @Override
+    public List<Map<String, String>> taskConfigs(int i) {
+        ArrayList<Map<String, String>> configs = new ArrayList<>();
+        configs.add(config.originalsStrings());
+        return configs;
+    }
+
+    @Override
+    public void stop() {
+        context.disconnect();
+        //End DB connections or stop source connector or something
+    }
+
+    @Override
+    public ConfigDef config() {
+        return JDBCConnectorConfig.conf();
+    }
 }
