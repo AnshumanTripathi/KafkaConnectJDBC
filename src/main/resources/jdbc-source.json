@@ -2,7 +2,9 @@
   "name": "jdbc-source",
   "config": {
     "connector.class": "com.kafkaconnect.source.connector.JDBCSourceConnector",
-    "connection.url": "jdbc:mysql://mysql-source/",
+    "jdbc.connection.url": "jdbc:mysql://mysql-source/",
+    "jdbc.connection.params": "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC",
+    "jdbc.connector.class": "com.mysql.cj.jdbc.Driver",
     "connection.user": "root",
     "connection.password": "root",
     "database": "test",
