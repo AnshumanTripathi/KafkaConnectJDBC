@@ -16,8 +16,11 @@ public class JDBCConnectorConfig extends AbstractConfig {
   private static final String FIRST_NAME = "first_name";
   private static final String FIRST_NAME_DOC = "User's first name";
 
-  private static final String CONNECTION_URL = "connection.url";
+  private static final String CONNECTION_URL = "jdbc.connection.url";
   private static final String CONNECTION_URL_DOC = "JDBC Connection URL";
+
+  private static final String CONNECTION_URL_PARAMS = "jdbc.connection.url.params";
+  private static final String CONNECTION_URL_PARAMS_DOC = "JDBC Connection URL params";
 
   private static final String CONNECTION_USER = "connection.user";
   private static final String CONNECTION_USER_DOC = "DB User";
@@ -30,6 +33,9 @@ public class JDBCConnectorConfig extends AbstractConfig {
 
   private static final String CONNECTION_CLASS = "connector.class";
   private static final String CONNECTION_CLASS_DOC = "Connector Class";
+
+  private static final String JDBC_CONNECTOR_DRIVER_CLASS = "jdbc.connector.class";
+  private static final String JDBC_CONNECTOR_DRIVER_CLASS_DOC = "jdbc connector class";
 
   private static final String INCREMENTING_COLUMN_NAME = "incrementing_column_name";
   private static final String INCREMENTING_COLUMN_NAME_DOC = "Incrementing Column";
@@ -47,9 +53,10 @@ public class JDBCConnectorConfig extends AbstractConfig {
             .define(TOPIC, ConfigDef.Type.STRING, "jdbc-source",ConfigDef.Importance.HIGH, TOPIC_DOC)
             .define(CONNECTION_URL, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, CONNECTION_URL_DOC)
             .define(CONNECTION_USER, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, CONNECTION_USER_DOC)
-            .define(CONNECTION_PASSWORD, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, CONNECTION_PASSWORD_DOC)
+            .define(CONNECTION_PASSWORD, ConfigDef.Type.PASSWORD, ConfigDef.Importance.HIGH, CONNECTION_PASSWORD_DOC)
             .define(CONNECTION_CLASS, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, CONNECTION_CLASS_DOC)
-            .define(DATABASE, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, DATABASE_DOC);
+            .define(DATABASE, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, DATABASE_DOC)
+            .define(JDBC_CONNECTOR_DRIVER_CLASS, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, JDBC_CONNECTOR_DRIVER_CLASS_DOC);
   }
 
   public static String getTOPIC() {
@@ -78,5 +85,13 @@ public class JDBCConnectorConfig extends AbstractConfig {
 
   public static String getDatabase() {
     return DATABASE;
+  }
+
+  public static String getJdbcConnectorDriverClass() {
+    return JDBC_CONNECTOR_DRIVER_CLASS;
+  }
+
+  public static String getConnectionUrlParams() {
+    return CONNECTION_URL_PARAMS;
   }
 }
